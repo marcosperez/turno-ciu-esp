@@ -28,7 +28,7 @@ async function launchBrowser() {
   return await puppeteer.launch({
     headless: true,
     defaultViewport: null,
-    executablePath: "/usr/bin/google-chrome",
+    // executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox"],
   });
 }
@@ -60,7 +60,11 @@ async function VerificarMision() {
     const existeTexto = await page.evaluate(() => {
       // Busca el elemento que contiene el texto específico
       const element = document.querySelector("span > strong + span");
-      return element && element.textContent.includes("Fecha a confirmar2.");
+      return element && element.textContent.includes("Fecha a confirmar");
+    });
+
+    await page.evaluate(() => {
+      window.scrollBy(0, 1000);
     });
 
     if (existeTexto) {
