@@ -1,72 +1,35 @@
-# syntax = docker/dockerfile:1
+FROM node:18
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=16.19.1
-FROM node:${NODE_VERSION}-slim as base
+# We don't need the standalone Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
-LABEL fly_launch_runtime="Node.js"
+# Install Google Chrome Stable and fonts
+# Note: this installs the necessary libs to make the browser work with Puppeteer.
+RUN apt-get update && apt-get install curl gnupg -y \
+  && curl --location --silent https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+  && apt-get update \
+  && apt-get install google-chrome-stable -y --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
 
-# Node.js app lives here
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV="production"
+# Copiar el package.json y package-lock.json
+COPY package*.json ./
+RUN npx puppeteer browsers install chrome
 
+# Instalar las dependencias de Node.js
+RUN npm install --production
 
-# Throw-away build stage to reduce size of final image
-FROM base as build
+# Copiar el código de la aplicación a /app
+COPY . .
 
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python
-
-# Install node modules
-COPY --link package-lock.json package.json ./
-RUN npm ci
-
-# Copy application code
-COPY --link . .
-
-
-# Final stage for app image
-FROM base
-
-# Install packages needed for deployment
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y chromium chromium-sandbox && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
-
-# Copy built application
-COPY --from=build /app /app
-
-# Start the server by default, this can be overwritten at runtime
+# Exponer el puerto 9999
 EXPOSE 9999
-ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/chromium"
 
-CMD [ "node", "index.js" ]
-
-# FROM --platform=linux/amd64 debian:bookworm-slim
-
-# RUN apt-get update
-
-# # Install node
-# RUN apt-get install -y nodejs npm
-
-# # Install chrome and dependencies
-# RUN apt-get install -y wget gpg
-# RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/googlechrome-linux-keyring.gpg \
-#     && sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/googlechrome-linux-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-#     && apt-get update
-# RUN apt-get install -y google-chrome-stable fonts-freefont-ttf libxss1 \
-#     --no-install-recommends
-
-# # ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+# Definir la variable de entorno para Puppeteer
 # ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/chromium"
 
-# WORKDIR /app
-
-# COPY package* .
-# RUN npm i
-# COPY * ./
-# EXPOSE 9999
-# CMD [ "node", "index.js" ]
+# Comando por defecto para iniciar la aplicación
+CMD [ "node", "index.js" ]

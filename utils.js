@@ -7,21 +7,38 @@ function esperarSegundos(segundos) {
   });
 }
 function playAleluya() {
-  player.play("./musica-aleluya.mp3", (err) => {
-    if (err) {
-      console.error("Error al reproducir el audio:", err);
-    } else {
-      console.log("Audio reproducido con éxito");
+  console.log("Play music");
 
-      playAleluya();
-    }
+  // player.play("./musica-aleluya.mp3", (err) => {
+  //   if (err) {
+  //     console.error("Error al reproducir el audio:", err);
+  //   } else {
+  //     console.log("Audio reproducido con éxito");
+
+  //     playAleluya();
+  //   }
+  // });
+}
+
+async function launchBrowser() {
+  // Local
+  // browser = await puppeteer.launch({ headless: false });
+
+  // Servidor docker
+  return await puppeteer.launch({
+    headless: true,
+    defaultViewport: null,
+    executablePath: "/usr/bin/google-chrome",
+    args: ["--no-sandbox"],
   });
 }
 
 async function VerificarMision() {
   console.log("Iniciando proceso para verificacion de mision...");
   let browser, page;
-  browser = await puppeteer.launch({ headless: false });
+
+  browser = await launchBrowser();
+
   console.log("Navegador lanzado.");
   page = await browser.newPage();
   await page.setViewport({ width: 1920, height: 1080 });
