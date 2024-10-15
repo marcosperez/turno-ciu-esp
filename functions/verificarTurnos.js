@@ -56,7 +56,7 @@ async function VerificarSiHayTurnos() {
     await EsperarSegundos(5);
     console.log("Esperando encontrar idCaptchaButton...");
 
-    await page.waitForSelector("#idCaptchaButton", { timeout: 60000 });
+    await page.waitForSelector("#idCaptchaButton", { timeout: 120000 });
     console.log("Selector del botón de captcha encontrado.");
 
     console.log("Esperando 5 segundos...");

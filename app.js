@@ -72,13 +72,13 @@ async function verify() {
       </table>
     `;
 
-    enviarCorreo(
+    await enviarCorreo(
       "Resultado de tabla",
       "Tabla con ultimos resultados...",
       htmlTable
     );
 
-    const whatsappMessage = results.map(
+    const whatsappMessage = [results[results.length - 1]].map(
       (result) =>
         `Fecha: ${result.timestamp.toLocaleString()} - Turnos: ${
           result.turnos ? "*SI*" : "*NO*"
@@ -86,7 +86,7 @@ async function verify() {
     ).join(`
         `);
 
-    SendWhatsAppMessage(whatsappMessage);
+    await SendWhatsAppMessage(whatsappMessage);
   }
   attemptCount = 0;
 }

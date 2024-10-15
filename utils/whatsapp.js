@@ -19,6 +19,8 @@ const client = twilio(accountSid, authToken);
  * @returns {Promise} - Una promesa que se resuelve cuando el mensaje se ha enviado.
  */
 function SendWhatsAppMessage(body) {
+  console.log("Enviando mensaje de WhatsApp... ", body);
+
   return client.messages.create({
     body: body,
     from: "whatsapp:" + TWILIO_FROM, // Número de WhatsApp de Twilio
