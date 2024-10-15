@@ -18,16 +18,6 @@ async function verify() {
     mision: resultMision.hayFechaDeMision,
   };
 
-  const whatsappMessage = `
-    *Hora y Día:* ${result.timestamp.toLocaleString()}
-    
-    *Turnos:* ${result.turnos ? "*SI*" : "*NO*"}
-    
-    *Mision:* ${result.mision ? "*SI*" : "*NO*"}
-  `;
-
-  SendWhatsAppMessage(whatsappMessage);
-
   results.push(result);
 
   // Keep only the results from the last 24 hours
@@ -56,11 +46,6 @@ async function verify() {
 
   attemptCount++;
   if (attemptCount >= 6) {
-    const emailTable = new Table({
-      head: ["Timestamp", "Turnos", "Mision"],
-      colWidths: [30, 10, 10],
-    });
-
     // Convert table to HTML
     const htmlTable = `
       <table border="1" cellpadding="5" cellspacing="0">
@@ -92,12 +77,23 @@ async function verify() {
       "Tabla con ultimos resultados...",
       htmlTable
     );
+
+    const whatsappMessage = results.map(
+      (result) =>
+        `Fecha: ${result.timestamp.toLocaleString()} - Turnos: ${
+          result.turnos ? "*SI*" : "*NO*"
+        }  Mision: ${result.mision ? "*SI*" : "*NO*"}`
+    ).join(`
+        `);
+
+    SendWhatsAppMessage(whatsappMessage);
   }
   attemptCount = 0;
 }
 
 function main() {
   console.log("[MAIN] Task running at", new Date());
+  verify();
 
   const scheduleNextRun = () => {
     const now = new Date();
