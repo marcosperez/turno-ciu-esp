@@ -78,22 +78,13 @@ async function verify() {
       htmlTable
     );
 
-    const whatsappMessage = [results[results.length - 1]].map(
-      (result) =>
-        `Fecha: ${result.timestamp.toLocaleString()} - Turnos: ${
-          result.turnos ? "*SI*" : "*NO*"
-        }  Mision: ${result.mision ? "*SI*" : "*NO*"}`
-    ).join(`
-        `);
-
-    await SendWhatsAppMessage(whatsappMessage);
+    attemptCount = 0;
   }
-  attemptCount = 0;
+  await SendWhatsAppMessage(results);
 }
 
 function main() {
   console.log("[MAIN] Task running at", new Date());
-  verify();
 
   const scheduleNextRun = () => {
     const now = new Date();

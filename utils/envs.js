@@ -9,6 +9,7 @@ const {
   TWILIO_AUTH_TOKEN,
   TWILIO_FROM,
   TWILIO_TO,
+  TWILIO_CONTENT_SID,
 } = process.env;
 
 export {
@@ -18,4 +19,5 @@ export {
   TWILIO_AUTH_TOKEN,
   TWILIO_FROM,
   TWILIO_TO,
+  TWILIO_CONTENT_SID,
 };
