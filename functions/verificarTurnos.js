@@ -4,10 +4,10 @@ import {
   EsperarSegundos,
 } from "../utils/common.js";
 
-async function VerificarSiHayTurnos() {
+async function VerificarSiHayTurnos(sinBrowser = true) {
   console.log("Iniciando proceso para sacar cita...");
   let browser, page;
-  browser = await LaunchBrowser();
+  browser = await LaunchBrowser({ headless: sinBrowser });
 
   console.log("Navegador lanzado.");
   page = await browser.newPage();
@@ -56,7 +56,7 @@ async function VerificarSiHayTurnos() {
     await EsperarSegundos(5);
     console.log("Esperando encontrar idCaptchaButton...");
 
-    await page.waitForSelector("#idCaptchaButton", { timeout: 120000 });
+    await page.waitForSelector("#idCaptchaButton", { timeout: 180000 });
     console.log("Selector del botón de captcha encontrado.");
 
     console.log("Esperando 5 segundos...");
@@ -97,6 +97,7 @@ async function VerificarSiHayTurnos() {
     console.log("Captura de pantalla guardada como si-hay-turnosssss.png");
     await page.screenshot({ path: "./si-hay-turnosssss.png" });
     InformameHayTurnosss();
+    if (sinBrowser) await VerificarSiHayTurnos(false);
     return { hayturnos: true };
   } finally {
     if (browser) await browser.close();
