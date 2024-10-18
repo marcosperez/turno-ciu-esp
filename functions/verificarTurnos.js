@@ -4,7 +4,7 @@ import {
   EsperarSegundos,
 } from "../utils/common.js";
 
-async function VerificarSiHayTurnos(sinBrowser = true) {
+async function VerificarSiHayTurnos(screenshotsDir, sinBrowser = true) {
   console.log("Iniciando proceso para sacar cita...");
   let browser, page;
   browser = await LaunchBrowser({ headless: sinBrowser });
@@ -67,7 +67,7 @@ async function VerificarSiHayTurnos(sinBrowser = true) {
   } catch (error) {
     console.error("No hay turnos :'() :", error);
     console.log("Captura de pantalla guardada como no-hay-turnos0.png");
-    await page.screenshot({ path: "./no-hay-turnos0.png" });
+    await page.screenshot({ path: screenshotsDir + "/no-hay-turnos0.png" });
     if (browser) await browser.close();
 
     return { hayturnos: false };
@@ -88,19 +88,19 @@ async function VerificarSiHayTurnos(sinBrowser = true) {
     console.log("No hay turno :'(");
 
     console.log("Captura de pantalla guardada como no-hay-turnos1.png");
-    await page.screenshot({ path: "./no-hay-turnos1.png" });
+    await page.screenshot({ path: screenshotsDir + "/no-hay-turnos1.png" });
 
     console.log("Proceso completado con éxito.");
     return { hayturnos: false };
   } catch (error) {
     console.error("Hay turnoooossss :", error);
     console.log("Captura de pantalla guardada como si-hay-turnosssss.png");
-    await page.screenshot({ path: "./si-hay-turnosssss.png" });
+    await page.screenshot({ path: screenshotsDir + "/si-hay-turnosssss.png" });
     InformameHayTurnosss();
-    if (sinBrowser) await VerificarSiHayTurnos(false);
+    if (sinBrowser) await VerificarSiHayTurnos(screenshotsDir, false);
     return { hayturnos: true };
   } finally {
-    if (browser) await browser.close();
+    if (browser && sinBrowser) await browser.close();
   }
 }
 

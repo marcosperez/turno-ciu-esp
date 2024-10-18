@@ -4,7 +4,7 @@ import {
   EsperarSegundos,
 } from "../utils/common.js";
 
-async function VerificarMision() {
+async function VerificarMision(screenshotsDir) {
   console.log("Iniciando proceso para verificacion de mision...");
   let browser, page;
 
@@ -40,12 +40,14 @@ async function VerificarMision() {
 
     if (existeTexto) {
       console.log("Captura de pantalla guardada como no-hay-fecha.mision.png");
-      await page.screenshot({ path: "./no-hay-fecha.mision.png" });
+      await page.screenshot({
+        path: screenshotsDir + "/no-hay-fecha.mision.png",
+      });
       return { hayFechaDeMision: false };
     }
 
     console.log("Captura de pantalla guardada como hay-fecha-mision.png");
-    await page.screenshot({ path: "./hay-fecha-mision.png" });
+    await page.screenshot({ path: screenshotsDir + "/hay-fecha-mision.png" });
     InformameHayTurnosss();
     return { hayFechaDeMision: true };
   } catch (error) {

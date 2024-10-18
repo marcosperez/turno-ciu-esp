@@ -4,13 +4,20 @@ import { VerificarMision } from "./functions/verificarMision.js";
 import { VerificarSiHayTurnos } from "./functions/verificarTurnos.js";
 import { enviarCorreo } from "./utils/email.js";
 import { SendWhatsAppMessage } from "./utils/whatsapp.js";
+import {
+  createDirectoryIfNotExists,
+  getCurrentDateTime,
+} from "./utils/common.js";
 
 const results = [];
 let attemptCount = 6;
 
 async function verify() {
-  const resultTurnos = await VerificarSiHayTurnos();
-  const resultMision = await VerificarMision();
+  const currentDateTime = getCurrentDateTime();
+  const verifyDirPath = `./screenshots/${currentDateTime}`;
+  createDirectoryIfNotExists(verifyDirPath);
+  const resultTurnos = await VerificarSiHayTurnos(verifyDirPath);
+  const resultMision = await VerificarMision(verifyDirPath);
 
   const result = {
     timestamp: new Date(),
